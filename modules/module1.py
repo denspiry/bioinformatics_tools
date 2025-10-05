@@ -1,4 +1,7 @@
-def is_valid_dna(seq):
+from typing import Dict, Tuple, Union, List, Optional
+
+
+def is_valid_dna(seq: str) -> bool:
     """
     Checks if the sequence contains only DNA bases (A, T, C, G).
 
@@ -11,7 +14,7 @@ def is_valid_dna(seq):
     return all(base in 'ATCGatcg' for base in seq)
 
 
-def is_valid_rna(seq):
+def is_valid_rna(seq: str) -> bool:
     """
     Checks if the sequence contains only RNA bases (A, U, C, G).
 
@@ -24,7 +27,7 @@ def is_valid_rna(seq):
     return all(base in 'AUCGaucg' for base in seq)
 
 
-def is_nucleic_acid(seq):
+def is_nucleic_acid(seq: str) -> bool:
     # Check if seq contains either DNA or RNA bases only
     """
     Checks if the sequence is either DNA or RNA (but not both T and U).
@@ -35,12 +38,12 @@ def is_nucleic_acid(seq):
     Returns True if valid DNA or RNA, False otherwise.
     """
 
-    has_t = any(base in 'Tt' for base in seq)
-    has_u = any(base in 'Uu' for base in seq)
+    has_t: bool = any(base in 'Tt' for base in seq)
+    has_u: bool = any(base in 'Uu' for base in seq)
     return not (has_t and has_u) and (is_valid_dna(seq) or is_valid_rna(seq))
 
 
-def reverse(seq):
+def reverse(seq: str) -> Optional[str]: # Optional because of None
     """
     Reverses a DNA or RNA sequence.
 
@@ -56,7 +59,7 @@ def reverse(seq):
     return seq[::-1]
 
 
-def complement(seq):
+def complement(seq: str) -> Optional[str]: # Optional because of None
     """
     Computes the complement of a DNA or RNA sequence.
 
@@ -69,15 +72,15 @@ def complement(seq):
 
     if not is_nucleic_acid(seq):
         return None
-    complement_map_dna = str.maketrans('ATCGatcg', 'TAGCtagc')
-    complement_map_rna = str.maketrans('AUCGaucg', 'UAGCuagc')
+    complement_map_dna: dict = str.maketrans('ATCGatcg', 'TAGCtagc')
+    complement_map_rna: dict = str.maketrans('AUCGaucg', 'UAGCuagc')
     if is_valid_dna(seq):
         return seq.translate(complement_map_dna)
     else:
         return seq.translate(complement_map_rna)
 
 
-def reverse_complement(seq):
+def reverse_complement(seq: str) -> Optional[str]: # Optional because of None
     """
     Computes the reverse complement of a DNA or RNA sequence.
 
@@ -93,7 +96,7 @@ def reverse_complement(seq):
     return reverse(complement(seq))
 
 
-def transcribe(seq):
+def transcribe(seq: str) -> Optional[str]: # Optional because of None
     """
     Transcribes DNA into RNA.
 
@@ -106,7 +109,7 @@ def transcribe(seq):
 
     if not is_nucleic_acid(seq):
         return None
-    transcription_map_dna = str.maketrans('ATCGatcg', 'AUCGaucg')
+    transcription_map_dna: dict = str.maketrans('ATCGatcg', 'AUCGaucg')
     if is_valid_dna(seq):
         # Replace T -> U
         return seq.translate(transcription_map_dna)
@@ -115,7 +118,7 @@ def transcribe(seq):
 
 
 # Dictionary for matching procedures and functions
-procedure_map = {
+procedure_map: Dict[str, callable] = {
     'is_nucleic_acid': is_nucleic_acid,
     'transcribe': transcribe,
     'reverse': reverse,

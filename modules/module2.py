@@ -1,4 +1,7 @@
-def calculate_gc_content(seq):
+from typing import Dict, Tuple, Union, List, Optional
+
+
+def calculate_gc_content(seq: str) -> float:
     """
     Calculates the GC content of a nucleotide sequence as a percentage.
 
@@ -13,7 +16,7 @@ def calculate_gc_content(seq):
     return (gc_count / len(seq)) * 100 if seq else 0
 
 
-def calculate_average_quality(quality_str):
+def calculate_average_quality(quality_str: str) -> float:
     """
     Calculates average read quality from a Phred+33 quality string.
 
@@ -28,7 +31,7 @@ def calculate_average_quality(quality_str):
     return sum(qualities) / len(qualities) if qualities else 0
 
 
-def in_bounds(value, bounds):
+def in_bounds(value: Union[int, float], bounds: Union[Tuple[float, float], float]) -> bool:
     """
     Checks if a value is within given bounds (inclusive).
 
