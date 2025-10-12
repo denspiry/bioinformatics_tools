@@ -43,7 +43,7 @@ def is_nucleic_acid(seq: str) -> bool:
     return not (has_t and has_u) and (is_valid_dna(seq) or is_valid_rna(seq))
 
 
-def reverse(seq: str) -> Optional[str]: # Optional because of None
+def reverse(seq: str) -> str:
     """
     Reverses a DNA or RNA sequence.
 
@@ -51,15 +51,12 @@ def reverse(seq: str) -> Optional[str]: # Optional because of None
     seq: str - nucleotide sequence
 
     Returns reversed sequence as str.
-    Returns None if the sequence is not valid DNA or RNA.
     """
 
-    if not is_nucleic_acid(seq):
-        return None
     return seq[::-1]
 
 
-def complement(seq: str) -> Optional[str]: # Optional because of None
+def complement(seq: str) -> str:
     """
     Computes the complement of a DNA or RNA sequence.
 
@@ -67,11 +64,8 @@ def complement(seq: str) -> Optional[str]: # Optional because of None
     seq: str - nucleotide sequence
 
     Returns complemented sequence as str.
-    Returns None if the sequence is not valid DNA or RNA.
     """
 
-    if not is_nucleic_acid(seq):
-        return None
     complement_map_dna: dict = str.maketrans('ATCGatcg', 'TAGCtagc')
     complement_map_rna: dict = str.maketrans('AUCGaucg', 'UAGCuagc')
     if is_valid_dna(seq):
@@ -80,7 +74,7 @@ def complement(seq: str) -> Optional[str]: # Optional because of None
         return seq.translate(complement_map_rna)
 
 
-def reverse_complement(seq: str) -> Optional[str]: # Optional because of None
+def reverse_complement(seq: str) -> str:
     """
     Computes the reverse complement of a DNA or RNA sequence.
 
@@ -88,15 +82,12 @@ def reverse_complement(seq: str) -> Optional[str]: # Optional because of None
     seq: str - nucleotide sequence
 
     Returns reverse-complemented sequence as str.
-    Returns None if the sequence is not valid DNA or RNA.
     """
 
-    if not is_nucleic_acid(seq):
-        return None
     return reverse(complement(seq))
 
 
-def transcribe(seq: str) -> Optional[str]: # Optional because of None
+def transcribe(seq: str) -> str:
     """
     Transcribes DNA into RNA.
 
@@ -104,11 +95,8 @@ def transcribe(seq: str) -> Optional[str]: # Optional because of None
     seq: str - nucleotide sequence
 
     Returns RNA sequence as str.
-    Returns None if the sequense is not valid DNA or RNA
     """
 
-    if not is_nucleic_acid(seq):
-        return None
     transcription_map_dna: dict = str.maketrans('ATCGatcg', 'AUCGaucg')
     if is_valid_dna(seq):
         # Replace T -> U

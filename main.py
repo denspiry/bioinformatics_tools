@@ -76,8 +76,18 @@ def run_dna_rna_tools(*args: str) -> Union[str, List[Optional[str]]]:
 
     procedure_func = procedure_map[procedure_name]
 
-    results: List[Optional[str]] = [procedure_func(seq) for seq in sequences]
+    results: List[Optional[str]] = []
 
-    if len(results) == 1:
-        return results[0] # to return one string
-    return results
+    for seq in sequences:
+        if procedure_name == "is_nucleic_acid":
+            results.append(is_nucleic_acid(seq))
+            continue
+
+        # Check if seq is nucleic acid
+        if not is_nucleic_acid(seq):
+            results.append(None)
+            continue
+
+        results.append(procedure_func(seq))
+
+    return results[0] if len(results) == 1 else results
