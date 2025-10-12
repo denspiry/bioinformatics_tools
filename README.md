@@ -1,10 +1,11 @@
 ### DNA/RNA Tools & FASTQ Filter
 
-This Python package provides basic utilities for working with DNA/RNA sequences and filtering FASTQ-formatted reads based on GC content, sequence length, and quality scores.
+This Python package provides basic utilities for working with DNA/RNA sequences and filtering FASTQ-files based on GC content, sequence length, and quality scores.
 
 ## Structure
 bioinformatics_tools/
 ├── main.py
+├── bio_files_processor.py
 ├── modules/
 │   ├── module1.py   # DNA/RNA tools
 │   └── module2.py   # FASTQ filtering tools
@@ -19,12 +20,17 @@ bioinformatics_tools/
     + GC content calculation
     + Quality score parsing (Phred+33)
     + Read filtering based on customizable bounds
+    + Read and write large fastq files
 
 * Dispatcher function:
     + 'run_dna_rna_tools(*args)' in 'main.py' allows you to apply operations like:
 ```python
 run_dna_rna_tools('AUGC', 'reverse') # 'CGAU'
 ```
+
+* bio_files_processor.py:
+    + Convert multiline fastq files to one-line format
+    + Parse a BLAST text output file and extract the best hit
 
 ## How to Use
 
@@ -45,7 +51,8 @@ from modules.module2 import filter_fastq
 
 ```python
 filtered = filter_fastq(
-    seqs=my_fastq_dict,
+    input_fastq: input_file_name,
+    output_fastq: output_file_name,
     gc_bounds=(40, 60),
     length_bounds=(50, 150),
     quality_threshold=30
@@ -73,7 +80,8 @@ run_dna_rna_tools('ATG', 'aT', 'reverse') # ['GTA', 'Ta']
 
 * GC and quality thresholds are inclusive.
 * Quality is interpreted using Phred+33 encoding.
+* 'filter_fastq' can create output file and does not overwrite any existing files. 
 * 'run_dna_rna_tools' accepts multiple sequences and returns transformed output(s).
-* 'run_dna_rna_tools' accepts bot lower and upper case strings and doesn't change it
+* 'run_dna_rna_tools' accepts both lower and upper case strings and does not change it
 
 
