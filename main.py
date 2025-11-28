@@ -1,4 +1,7 @@
-from typing import Dict, Tuple, Union, List, Optional
+import os
+
+
+from typing import Generator, TextIO, Dict, Tuple, Union, List, Optional
 
 
 from modules.module2 import (
@@ -12,37 +15,41 @@ from modules.module1 import procedure_map
 
 
 def filter_fastq(
-    seqs: Dict[str, Tuple[str, str]],
+    input_fastq: str,
+    output_fastq: str,
     gc_bounds: Union[Tuple[float, float], float] = (0, 100),
     length_bounds: Union[Tuple[int, int], int] = (0, 2**32),
     quality_threshold: float = 0
-) -> Dict[str, Tuple[str, str]]:
+) -> None:
     """
-    Filters FASTQ reads by GC content, length, and average quality.
+    Filters reads from an input FASTQ file.
+    Writes passing reads to an output file.
+
+    Filtering criteria:
+    - GC content must be within gc_bounds
+    - Sequence length must be within length_bounds
+    - Average quality must be >= quality_threshold
 
     Arguments:
+    input_fastq: str - path to the input FASTQ file
+    output_fastq: str - name of the output file to write (will be saved in 'filtered/')
     seqs: dict - {name: (sequence, quality)}
     gc_bounds: tuple or float - GC content bounds in percent
     length_bounds: tuple or int - sequence length bounds
     quality_threshold: float - minimum average quality (Phred+33)
-
-    Returns dict of filtered sequences with the same structure as input.
     """
-    filtered_seqs = {}
-
-    for name, (sequence, quality) in seqs.items():
-        gc_content = calculate_gc_content(sequence)
-        avg_quality = calculate_average_quality(quality)
-        seq_length = len(sequence)
+    with open_output_file_safe(output_fastq) as (out_file, file_path):
+        for name, sequence, plus, quality in read_fastq(input_fastq):
+            gc_content = calculate_gc_content(sequence)
+            avg_quality = calculate_average_quality(quality)
+            seq_length = len(sequence)
 
         if (
             in_bounds(gc_content, gc_bounds)
             and in_bounds(seq_length, length_bounds)
             and avg_quality >= quality_threshold
         ):
-            filtered_seqs[name] = (sequence, quality)
-
-    return filtered_seqs
+            write_fastq_record(out_file, name, sequence, plus, quality)
 
 
 def run_dna_rna_tools(*args: str) -> Union[str, List[Optional[str]]]:
@@ -69,8 +76,18 @@ def run_dna_rna_tools(*args: str) -> Union[str, List[Optional[str]]]:
 
     procedure_func = procedure_map[procedure_name]
 
-    results: List[Optional[str]] = [procedure_func(seq) for seq in sequences]
+    results: List[Optional[str]] = []
 
-    if len(results) == 1:
-        return results[0] # to return one string
-    return results
+    for seq in sequences:
+        if procedure_name == "is_nucleic_acid":
+            results.append(is_nucleic_acid(seq))
+            continue
+
+        # Check if seq is nucleic acid
+        if not is_nucleic_acid(seq):
+            results.append(None)
+            continue
+
+        results.append(procedure_func(seq))
+
+    return results[0] if len(results) == 1 else results
